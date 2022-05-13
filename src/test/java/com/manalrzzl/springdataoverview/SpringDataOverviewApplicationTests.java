@@ -44,5 +44,4 @@ class CrudTests {
 
 		Assertions.assertThat(flightRepository.count()).isZero();
 	}
-
 }
