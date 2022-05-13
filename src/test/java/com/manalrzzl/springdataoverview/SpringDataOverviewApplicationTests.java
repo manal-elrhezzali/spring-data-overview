@@ -1,6 +1,7 @@
 package com.manalrzzl.springdataoverview;
 
 import com.manalrzzl.springdataoverview.entity.Flight;
+import com.manalrzzl.springdataoverview.repository.FlightRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -20,10 +21,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 // as quickly as possible as there is no overhead of starting up things
 // that we don't need
 @DataJpaTest
-class SpringDataOverviewApplicationTests {
+class CrudTests {
 
 	@Autowired
-	private EntityManager entityManager;
+	private FlightRepository flightRepository;
 
 	@Test
 	public void verifyFlightCanBeSaved() {
@@ -32,17 +33,16 @@ class SpringDataOverviewApplicationTests {
 		flight.setDestination("Morocco");
 		flight.setScheduledAt(LocalDateTime.parse("2022-07-01T12:12:00"));
 
-		entityManager.persist(flight);
+		flightRepository.save(flight);
 
-		final TypedQuery<Flight> results = entityManager
-				.createQuery("SELECT f FROM Flight f", Flight.class);
-
-		final List<Flight> resultList = results.getResultList();
-
-		Assertions.assertThat(resultList)
+		Assertions.assertThat(flightRepository.findAll())
 				.hasSize(1)
 				.first()
 				.isEqualTo(flight);
+
+		flightRepository.deleteById(flight.getId());
+
+		Assertions.assertThat(flightRepository.count()).isZero();
 	}
 
 }
